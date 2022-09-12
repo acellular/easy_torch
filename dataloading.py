@@ -28,7 +28,7 @@ def to_dev(data, device):
 
 
 class DLWrapper:
-    """Wrap a dataloader to move data to a device"""
+    """Wrap a DataLoader to move data to a device"""
     
     def __init__(self, dl, dev):
         self.dl = dl
