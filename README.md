@@ -1,7 +1,7 @@
 ## easy_torch (v0.12)
 
 A set of helper/wrapper classes and functions for easy
-one-line creation of cudo-enabled, batch-loaded
+one-line creation of cuda-enabled, batch-loaded
 MLP and 2d-convolutional neural networks using pytorch
 
 
@@ -61,7 +61,6 @@ required to run usage-example notebook.
 ### Development
 
 Possible future additions:
-
 	- optional residual layers argument for both MLP and convolutional networks  
 	- recursive networks (EasyRecurv)  
 	- long short-term memory networks (EasyLSTM)  
