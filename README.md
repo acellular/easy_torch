@@ -60,7 +60,7 @@ required to run usage-example notebook.
 
 ### Development
 
-Possible future additions:
+Possible future additions:  
 	- optional residual layers argument for both MLP and convolutional networks  
 	- recursive networks (EasyRecurv)  
 	- long short-term memory networks (EasyLSTM)  
