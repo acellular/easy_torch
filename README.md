@@ -1,4 +1,4 @@
-## easy_torch (v0.12)
+## easy_torch (v0.14)
 
 A set of helper/wrapper classes and functions for easy
 one-line creation of cuda-enabled, batch-loaded
@@ -6,11 +6,12 @@ MLP and 2d-convolutional neural networks using pytorch
 
 
 ### Usage
-#### Data Loading
 
 (See included Jupyter notebook for interactive examples)
 
-To create any supported neural network data must first be in a Dataloader.
+#### Data Loading
+
+Data must first be in a Dataloader.
 These can be loaded in many ways, such as loading from built-in datasets like CIFAR100:
 ```
 transform = transforms.Compose([transforms.ToTensor(),
@@ -19,8 +20,8 @@ transform = transforms.Compose([transforms.ToTensor(),
 trainset = torchvision.datasets.CIFAR100(root='./data', train=True, download=True, transform=transform)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=True, num_workers=2)
 ```
-Or by using the added dataloading.from_np() here to create Dataloaders
-from numpy arrays (themselves created however you might like):
+Or from dataloading.py, create Dataloaders from numpy arrays
+(themselves created however you might like):
 ```
 from_np(X_train, X_test, y_train, y_test, batch_size=64)
 ```
@@ -31,36 +32,42 @@ To create and train an MLP network (flattens any-dimentional input data):
 ```
 mlp = EasyTorchMLP(features, classes, hidden_layer_sizes=(200,100,...))
 mlp.fit(train_dataloader, test_dataloader, epochs=10,
-		lr=1e-3, weight_decay=0, opt_func=torch.optim.Adam, verbose=True)
+        lr=1e-3, weight_decay=0, opt_func=torch.optim.Adam, verbose=True)
 ```
 
 To create and train a 2d-convolutional network
 (where the first convolutional layer size is 
 the number of channels in the original data):
 ```
-covn = EasyTorchConv(classes, conv_layer_sizes=(3,256,...),
-					full_layer_sizes=(512,...), batch_norm=True)
+covn = EasyTorchConv(classes, conv_layer_sizes=(3,256,...),full_layer_sizes=(512,...))
 covn.fit(train_dataloader, test_dataloader, epochs=10,
-		lr=1e-4, weight_decay=1e-4, opt_func=torch.optim.Adam, verbose=True)
+        lr=1e-4, weight_decay=1e-4, opt_func=torch.optim.Adam, verbose=True)
 ```
 NOTE: Easiest way to figure out the first full_layer_size: 
 enter the convolutional layer sizes you'd like
 plus any number for the full layers and wait for the size error
 
+To add 2 nested residual layers to either EasyTorchMLP or EasyTorchConv
+set the argument during initialization, e.g: residual_inserts=(3,4,5)
+(by default residual_inserts=None)
+
+Set the activation function with actv_func, by default: actv_func=torch.nn.ReLU
+
+Add batch normalization with batch_norm=True
+
 
 ### Dependencies
-Tested on Python 3.9.6
-Requires torch with cuda (tested on 1.12.1 and CUDA 11.6):
-get proper pip download code here: https://pytorch.org/get-started/locally/
+Tested on Python 3.9.6  
+Requires torch with cuda (tested on 1.12.1 and CUDA 11.6):  
+get the proper pip download code here: https://pytorch.org/get-started/locally/
 
-sklearn and Jupeter Notebook or Lab
-(or relevant plugin for VSCode, Sublime, etc.)
+sklearn and Jupyter (or relevant plugin for VSCode, Sublime, etc.)
 required to run usage-example notebook.
 
 
 ### Development
 
 Possible future additions:  
-	- optional residual layers argument for both MLP and convolutional networks  
+	~~- optional residual layers argument for MLP and convolutional networks~~ ADDED v0.2  
 	- recursive networks (EasyRecurv)  
 	- long short-term memory networks (EasyLSTM)  

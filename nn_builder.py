@@ -14,7 +14,19 @@ def sum_mean(outputs):
 
 
 class EasyNN(torch.nn.Module):
-    """Base extension torch.nn.Module containing standard fit() method"""
+    """Base extension torch.nn.Module containing standard forward() and fit() methods"""
+
+    def forward(self, X):
+        """Moves through torch.nn.ModuleDict() layers,
+        adding together residual layers when required."""
+        out = X
+        for layer_name, layer in self.net.items():
+            if 'residual' in layer_name:
+                out = layer(out) + out
+            else: 
+                out = layer(out)
+        return out
+
 
     def train_test(self, dl, optimizer):
         """Basic training and prediction function
@@ -25,17 +37,15 @@ class EasyNN(torch.nn.Module):
             X, y = batch # Dataset tensors
             loss_func = torch.nn.CrossEntropyLoss() 
 
-            # run model, calculate loss
-            # TODO--might need to replace with forward() somewhere
-            #       for custom with residual layers and recursive later
-            logits = self.nn(X) #creating the predictions
+            # run model, calculate loss (calls the forward function)
+            logits = self(X) #creating the predictions
             loss = loss_func(logits, y.long())
             
             # important to be done in this order so gradients aren't carried over
             if self.training:
                 optimizer.zero_grad()
-                loss.backward() #backpropagation
-                optimizer.step() #update model parameters (i.e. weights)
+                loss.backward() # backpropagation
+                optimizer.step() # update model parameters (i.e. weights)
             
             # update loss, accuracy
             loss_score = loss.item()
@@ -52,19 +62,19 @@ class EasyNN(torch.nn.Module):
         and print loss and accuracy on both training and test data"""
 
         print(f"#### Start training: ####")
-
-        optimizer = opt_func(self.nn.parameters(), lr=lr, weight_decay=weight_decay)
-            
-        dev = "cuda" if torch.cuda.is_available() else "cpu" # can use CUDA?
+   
+        dev = 'cuda' if torch.cuda.is_available() else 'cpu' # can use CUDA?
         print(f"Device: {dev}")
 
         # initialize model and print shape
-        self.nn.to(dev)
+        self.to(dev)
         #print(torch.cuda.memory_summary(device=None, abbreviated=False))
         #torch.cuda.empty_cache() #TODO--needed?
 
         train_dataloader = dataloading.DLWrapper(train_dataloader, dev)
         test_dataloader = dataloading.DLWrapper(test_dataloader, dev)
+
+        optimizer = opt_func(self.parameters(), lr=lr, weight_decay=weight_decay)
 
         print("Training...")
         results_train = []
@@ -88,6 +98,6 @@ class EasyNN(torch.nn.Module):
                                     f"accuracy: {results_test[epoch]['accuracy']:.3f}")
 
         print(f"Training finished.\nFinal train loss: {results_train[epochs-1]['loss']:.3f}", 
-                                        f" accuracy: {results_train[epochs-1]['accuracy']:.3f}")
+                                        f":: accuracy: {results_train[epochs-1]['accuracy']:.3f}")
         print(f"Final test loss: {results_test[epochs-1]['loss']:.3f}",
-                    f" :: accuracy: {results_test[epochs-1]['accuracy']:.3f}")
+                    f":: accuracy: {results_test[epochs-1]['accuracy']:.3f}")
