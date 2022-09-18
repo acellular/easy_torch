@@ -1,4 +1,4 @@
-## easy_torch (v0.14)
+## easy_torch (v0.2)
 
 A set of helper/wrapper classes and functions for easy
 one-line creation of cuda-enabled, batch-loaded
