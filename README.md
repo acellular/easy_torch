@@ -1,8 +1,8 @@
 ## easy_torch (v0.2)
 
-A set of helper/wrapper classes and functions for easy
-one-line creation of cuda-enabled, batch-loaded
-MLP and 2d-convolutional neural networks using pytorch
+A simplified interface (facade) for pytorch with extensions and wrappers
+for easy one-line creation of cuda-enabled, batch-loaded
+MLP and 2d-convolutional neural networks
 
 
 ### Usage
